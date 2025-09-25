@@ -5,8 +5,9 @@ from datetime import datetime
 from fastapi.middleware.cors import CORSMiddleware
 
 
-
-BASE_DIR = Path("/Users/vikramadityasharma/Downloads") #UPDATE PATH HERE
+BASE_DIR = Path.cwd().parent / "stored_files"
+print(BASE_DIR)
+BASE_DIR.mkdir(parents=True, exist_ok=True)
 
 app = FastAPI()
 
