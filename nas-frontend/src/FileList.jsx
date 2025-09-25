@@ -20,6 +20,43 @@ function FileList({ searchTerm = "", refresh = 0}) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  const [textContent, setTextContent] = useState("");   // stores editable text
+  const [isEditing, setIsEditing] = useState(false);    // toggle editing mode
+
+  const [previewFile, setPreviewFile] = useState(null);
+  const [previewType, setPreviewType] = useState(null);
+
+  const viewTextFile = async (filename) => {
+    try {
+      const res = await axios.get(
+        `http://127.0.0.1:8000/view/${encodeURIComponent(filename)}`,
+        { responseType: "text" }
+      );
+      setTextContent(res.data);
+      setPreviewFile(filename);
+      setPreviewType("text");
+      setIsEditing(true);
+    } catch (err) {
+      console.error(err);
+      alert("Failed to load file");
+    }
+  };
+
+  const saveTextFile = async (filename) => {
+    try {
+      await axios.put(
+        `http://127.0.0.1:8000/edit/${encodeURIComponent(filename)}`,
+        { content: textContent },
+        { headers: { "Content-Type": "application/json" } }
+      );
+      alert("File saved!");
+      setIsEditing(false);
+    } catch (err) {
+      console.error(err);
+      alert("Failed to save file");
+    }
+  };
+
   useEffect(() => {
 
     axios.get(`http://127.0.0.1:8000/files`)
@@ -61,21 +98,51 @@ function FileList({ searchTerm = "", refresh = 0}) {
         <tbody>
           {filteredFiles.map(file => (
             <tr key={file.name} className="border-b hover:bg-gray-50">
+              {/* File Icon Column */}
               <td className="px-4 py-5">
                 <span className="mr-2">{getFileIcon(file.name)}</span>
                 {file.name}
               </td>
+              {/* File Name Column */}
               <td className="px-4 py-5">
                 {file.size_kb > 1024
                   ? `${(file.size_kb / 1024).toFixed(2)} MB`
                   : `${file.size_kb} KB`}
               </td>
+              {/* Last Modified Column */}
               <td className="px-4 py-5">
                 {file.modified
                   ? formatDistanceToNow(new Date(file.modified), { addSuffix: true })
                   : "-"}
               </td>
+              {/* All Actions Column */}
               <td className="px-4 py-5 space-x-2">
+
+                <button
+                  className="text-blue-600 hover:underline"
+                  onClick={() => {
+                    const ext = file.name.split(".").pop().toLowerCase();
+                                        
+                    if (["txt", "csv", "log"].includes(ext)) {
+                      viewTextFile(file.name);
+                    } else if (["mp4", "mkv", "mov"].includes(ext)) {
+                      window.open(
+                        `http://127.0.0.1:8000/view/${encodeURIComponent(file.name)}`,
+                        "_blank"
+                      );
+                    } else {
+                      // maybe still handle PDFs or images if needed
+                      window.open(
+                        `http://127.0.0.1:8000/view/${encodeURIComponent(file.name)}`,
+                        "_blank"
+                      );
+                    }
+
+                  }}
+                >
+                  View
+                </button>
+
                 <button
                   className="text-blue-600 hover:underline"
                   onClick={() =>
@@ -102,6 +169,7 @@ function FileList({ searchTerm = "", refresh = 0}) {
                   Delete
                 </button>
               </td>
+
             </tr>
           ))}
           {filteredFiles.length === 0 && (
@@ -113,6 +181,32 @@ function FileList({ searchTerm = "", refresh = 0}) {
           )}
         </tbody>
       </table>
+
+      {/* Text editor preview */}
+            {isEditing && (
+              <div className="mt-6 w-3/4">
+                <textarea
+                  className="w-full h-96 border p-2"
+                  value={textContent}
+                  onChange={(e) => setTextContent(e.target.value)}
+                ></textarea>
+                <div className="mt-2 space-x-2">
+                  <button
+                    className="px-4 py-2 bg-blue-600 text-white rounded"
+                    onClick={() => saveTextFile(previewFile)}
+                  >
+                    Save
+                  </button>
+                  <button
+                    className="px-4 py-2 bg-gray-400 text-white rounded"
+                    onClick={() => setIsEditing(false)}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            )}
+
     </div>
   );
 }
