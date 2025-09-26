@@ -72,14 +72,14 @@ def download_file(filename:str):
 
 
 @app.delete("/delete")
-def delete_file(filename:str = Body(...)):
+def delete_file(filename: str = Body(..., embed=True)):
     file_path = BASE_DIR / filename
-
     if not file_path.exists() or not file_path.is_file():
-        raise HTTPException(status_code=404,detail="FIle not found")
+        raise HTTPException(status_code=404, detail="File not found")
     
     file_path.unlink()
-    return {"message":f"{filename} deleted"}
+    return {"message": f"{filename} deleted"}
+
     
 @app.get("/view/{filename}")
 def view_file(filename: str):
