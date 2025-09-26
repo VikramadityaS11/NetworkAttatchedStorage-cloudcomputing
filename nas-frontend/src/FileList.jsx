@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { formatDistanceToNow } from "date-fns";
+import API_BASE from "./config";
+import API_BASE_URL from "./config";
+
 
 function getFileIcon(filename) {
   const ext = filename?.split('.').pop().toLowerCase();
@@ -26,8 +29,7 @@ function FileList({ searchTerm = "", refresh = 0}) {
   const [previewFile, setPreviewFile] = useState(null);
   const [previewType, setPreviewType] = useState(null);
 
-  const API_BASE = "http://192.168.0.119:8000"; // MAKE SURE TO CHANGE THIS TO YOUR BACKEND IP
-
+  const API_BASE = API_BASE_URL
 
   const viewTextFile = async (filename) => {
     try {
