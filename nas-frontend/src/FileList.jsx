@@ -134,7 +134,7 @@ function FileList({ searchTerm = "", refresh = 0}) {
                     } else {
                       // maybe still handle PDFs or images if needed
                       window.open(
-                        `http://127.0.0.1:8000/view/${encodeURIComponent(file.name)}`,
+                        `${API_BASE}/view/${encodeURIComponent(file.name)}`,
                         "_blank"
                       );
                     }
