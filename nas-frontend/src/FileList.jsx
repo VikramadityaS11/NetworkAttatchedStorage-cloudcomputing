@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { formatDistanceToNow } from "date-fns";
-import API_BASE from "./config";
 import API_BASE_URL from "./config";
 
 
@@ -131,10 +130,7 @@ function FileList({ searchTerm = "", refresh = 0}) {
                     if (["txt", "csv", "log"].includes(ext)) {
                       viewTextFile(file.name);
                     } else if (["mp4", "mkv", "mov"].includes(ext)) {
-                      window.open(
-                        `http://127.0.0.1:8000/view/${encodeURIComponent(file.name)}`,
-                        "_blank"
-                      );
+                      window.open(`${API_BASE}/view/${encodeURIComponent(file.name)}`, "_blank");
                     } else {
                       // maybe still handle PDFs or images if needed
                       window.open(
