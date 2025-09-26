@@ -1,9 +1,12 @@
 import { useState } from "react";
 import axios from "axios";
+import API_BASE_URL from "./config";
 
 function UploadForm({onUploadSuccess}){
     const [file, setFile] = useState(null);
     const [uploading,setUploading] = useState(false);
+
+    const API_BASE = API_BASE_URL
 
     const handleUpload = async () => {
         if(!file) return;
@@ -12,7 +15,7 @@ function UploadForm({onUploadSuccess}){
         formData.append("file", file);
         setUploading(true);
         try {
-            await axios.post("http://127.0.0.1:8000/upload",formData);
+            await axios.post(`${API_BASE}/upload`,formData);
             setFile(null);
             onUploadSuccess(); // call handleUploadSuccess in App.jsx
         } catch(err){

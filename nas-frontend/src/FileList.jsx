@@ -157,7 +157,7 @@ function FileList({ searchTerm = "", refresh = 0}) {
                   onClick={async () => {
                     try {
                       await axios.delete(`${API_BASE}/delete`, {
-                        data: { name: file.name },
+                        data: { filename: file.name },
                         headers: { "Content-Type": "application/json" },
                       });
                       setFiles(prev => (prev || []).filter(f => f.name !== file.name));
