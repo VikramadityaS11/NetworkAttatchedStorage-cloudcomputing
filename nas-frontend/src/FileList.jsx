@@ -26,10 +26,13 @@ function FileList({ searchTerm = "", refresh = 0}) {
   const [previewFile, setPreviewFile] = useState(null);
   const [previewType, setPreviewType] = useState(null);
 
+  const API_BASE = "http://192.168.0.119:8000"; // MAKE SURE TO CHANGE THIS TO YOUR BACKEND IP
+
+
   const viewTextFile = async (filename) => {
     try {
       const res = await axios.get(
-        `http://127.0.0.1:8000/view/${encodeURIComponent(filename)}`,
+        `${API_BASE}/view/${encodeURIComponent(filename)}`,
         { responseType: "text" }
       );
       setTextContent(res.data);
@@ -45,7 +48,7 @@ function FileList({ searchTerm = "", refresh = 0}) {
   const saveTextFile = async (filename) => {
     try {
       await axios.put(
-        `http://127.0.0.1:8000/edit/${encodeURIComponent(filename)}`,
+        `${API_BASE}/edit/${encodeURIComponent(filename)}`,
         { content: textContent },
         { headers: { "Content-Type": "application/json" } }
       );
@@ -59,7 +62,7 @@ function FileList({ searchTerm = "", refresh = 0}) {
 
   useEffect(() => {
 
-    axios.get(`http://127.0.0.1:8000/files`)
+    axios.get(`${API_BASE}/files`)
       .then(res => {
         const filesArray = Array.isArray(res.data.files)
           ? res.data.files
@@ -146,7 +149,7 @@ function FileList({ searchTerm = "", refresh = 0}) {
                 <button
                   className="text-blue-600 hover:underline"
                   onClick={() =>
-                    window.open(`http://127.0.0.1:8000/download/${encodeURIComponent(file.name)}`, "_blank")
+                    window.open(`${API_BASE}/download/${encodeURIComponent(file.name)}`, "_blank")
                   }
                 >
                   Download
@@ -155,7 +158,7 @@ function FileList({ searchTerm = "", refresh = 0}) {
                   className="text-red-600 hover:underline"
                   onClick={async () => {
                     try {
-                      await axios.delete(`http://127.0.0.1:8000/delete`, {
+                      await axios.delete(`${API_BASE}/delete`, {
                         data: { name: file.name },
                         headers: { "Content-Type": "application/json" },
                       });

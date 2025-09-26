@@ -20,6 +20,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.get("/")
+def root():
+    return {"message": "NAS backend is running! Please navigate to /docs for API documentation."}
+
 @app.get("/files")
 def getFiles():
     if not BASE_DIR.exists():
