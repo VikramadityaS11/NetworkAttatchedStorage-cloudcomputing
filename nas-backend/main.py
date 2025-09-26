@@ -85,7 +85,6 @@ def delete_file(filename: str = Body(..., embed=True)):
 def view_file(filename: str):
     file_path = BASE_DIR / filename
 
-    # Security check without breaking filenames
     if not file_path.resolve().is_file() or BASE_DIR not in file_path.resolve().parents:
         raise HTTPException(status_code=404, detail="File not found")
 
@@ -100,10 +99,16 @@ def view_file(filename: str):
         media_type = "image/png"
     elif ext == '.pdf':
         media_type = "application/pdf"
+    elif ext == '.svg':
+        media_type = "image/svg+xml"
     else:
-        return FileResponse(file_path, media_type="application/octet-stream", filename=file_path.name)
+        media_type = "application/octet-stream"
 
-    return FileResponse(file_path, media_type=media_type)
+    # **Do NOT pass filename for inline content**, let the browser render it
+    response = FileResponse(file_path, media_type=media_type)
+    response.headers["Cache-Control"] = "no-store"
+    return response
+
 
 
 class EditRequest(BaseModel):
