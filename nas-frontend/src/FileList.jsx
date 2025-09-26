@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { formatDistanceToNow } from "date-fns";
 import API_BASE_URL from "./config";
+import { useNavigate } from "react-router-dom";
 
 
 function getFileIcon(filename) {
@@ -27,6 +28,8 @@ function FileList({ searchTerm = "", refresh = 0}) {
 
   const [previewFile, setPreviewFile] = useState(null);
   const [previewType, setPreviewType] = useState(null);
+
+  const navigate = useNavigate();
 
   const API_BASE = API_BASE_URL
 
@@ -124,25 +127,11 @@ function FileList({ searchTerm = "", refresh = 0}) {
 
                 <button
                   className="text-blue-600 hover:underline"
-                  onClick={() => {
-                    const ext = file.name.split(".").pop().toLowerCase();
-                                        
-                    if (["txt", "csv", "log"].includes(ext)) {
-                      viewTextFile(file.name);
-                    } else if (["mp4", "mkv", "mov"].includes(ext)) {
-                      window.open(`${API_BASE}/view/${encodeURIComponent(file.name)}`, "_blank");
-                    } else {
-                      // maybe still handle PDFs or images if needed
-                      window.open(
-                        `${API_BASE}/view/${encodeURIComponent(file.name)}`,
-                        "_blank"
-                      );
-                    }
-
-                  }}
+                  onClick={() => navigate(`/edit/${encodeURIComponent(file.name)}`)}
                 >
                   View
                 </button>
+
 
                 <button
                   className="text-blue-600 hover:underline"
