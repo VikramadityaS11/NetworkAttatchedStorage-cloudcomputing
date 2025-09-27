@@ -20,15 +20,16 @@ function EditPage() {
     }
   }, [filename]);
 
-const saveFile = async () => {
-  try {
-    await axios.put(`${API_BASE}/edit/${filename}`, { content });
-    alert("File saved!");
-  } catch (err) {
-    console.error(err);
-    alert("Error saving file");
-  }
-  };
+  const saveFile = async () => {
+    try {
+      await axios.put(`${API_BASE}/edit/${filename}`, { content });
+      alert("File saved!");
+    } catch (err) {
+      console.error(err);
+      alert("Error saving file");
+    }
+    };
+  
 
 
   if (["mp4", "mkv", "mov"].includes(fileType)) {
@@ -40,9 +41,7 @@ const saveFile = async () => {
         </video>
       </div>
     );
-  }
-
-  if (["png", "jpg", "jpeg", "gif", "webp"].includes(fileType)) {
+  } else if (["png", "jpg", "jpeg", "gif", "webp"].includes(fileType)) {
   return (
     <div className="p-6">
       <h2 className="text-xl mb-4">{filename}</h2>
@@ -53,24 +52,7 @@ const saveFile = async () => {
       />
     </div>
   );
- }
-
- if (fileType === "svg") {
-    return (
-      <div className="p-6">
-        <h2 className="text-xl mb-4">{filename}</h2>
-        <object
-          type="image/svg+xml"
-          data={`${API_BASE}/view/${filename}`}
-          className="max-w-full h-auto border"
-        >
-          SVG cannot be displayed
-        </object>
-      </div>
-    );
-  }
-
- if (fileType === "pdf") {
+ } else if (fileType === "pdf") {
   return (
     <div className="p-6">
       <h2 className="text-xl mb-4">{filename}</h2>
@@ -81,9 +63,19 @@ const saveFile = async () => {
       ></iframe>
     </div>
   );
-}
-
-
+} else if (fileType === "docx") {
+  return (
+    <div className="p-6">
+      <h2 className="text-xl mb-4">{filename}</h2>
+      <iframe
+        src={`https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(API_BASE + '/view/' + filename)}`}
+        width="100%"
+        height="600px"
+        frameBorder="0"
+      ></iframe>
+    </div>
+  );
+} else if (["txt", "csv", "log"].includes(fileType)) {
   return (
     <div className="p-6">
       <h2 className="text-xl mb-4">{filename}</h2>
@@ -100,6 +92,18 @@ const saveFile = async () => {
       </button>
     </div>
   );
+} else
+{
+  return (
+    <div className="p-6">
+      <h2 className="text-xl mb-4">{filename}</h2>
+      <p className="text-gray-600">
+        Viewing this file type is not supported. Please download to view it.
+      </p>
+    </div>
+  );
+}
+
 }
 
 export default EditPage;
