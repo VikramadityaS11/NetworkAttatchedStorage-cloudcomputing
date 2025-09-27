@@ -20,10 +20,16 @@ function EditPage() {
     }
   }, [filename]);
 
-  const saveFile = async () => {
-    await axios.post(`${API_BASE}/save`, { filename, content });
+const saveFile = async () => {
+  try {
+    await axios.put(`${API_BASE}/edit/${filename}`, { content });
     alert("File saved!");
+  } catch (err) {
+    console.error(err);
+    alert("Error saving file");
+  }
   };
+
 
   if (["mp4", "mkv", "mov"].includes(fileType)) {
     return (
